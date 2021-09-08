@@ -1,0 +1,18 @@
+version: '3'
+services:
+    app:
+        container_name: fruit_store
+        restart: always
+        build: .
+        environment:
+            - PORT=3000
+            - DB_CONNECTION_STRING=mongodb://mongo:27017
+        ports:
+            - '8080:3000'
+        links:
+            - mongo
+    mongo:
+        container_name: mongo
+        image: mongo
+        ports:
+            - '27018:27017'

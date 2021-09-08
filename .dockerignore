@@ -1,0 +1,6 @@
+node_modules
+logs
+db_dump
+npm-debug.log
+test
+coverage

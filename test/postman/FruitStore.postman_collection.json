@@ -1,0 +1,1211 @@
+{
+    "info": {
+        "_postman_id": "a0efc749-2fd6-4472-a843-ae4b1a817f97",
+        "name": "FruitStore",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "login success",
+            "item": [
+                {
+                    "name": "signup",
+                    "event": [
+                        {
+                            "listen": "prerequest",
+                            "script": {
+                                "exec": ["let phone_number = \"09625355\" + (Math.floor(Math.random() * 99) + 10)\r", "pm.environment.set(\"phone_number\", phone_number)"],
+                                "type": "text/javascript"
+                            }
+                        },
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": ["pm.test(\"signup\", function () {\r", "    pm.response.to.have.status(201)\r", "    \r", "    const body = JSON.parse(pm.request.body.raw)\r", "    if (pm.response.code === 201) {\r", "        postman.setEnvironmentVariable(\"username\", body.phone_number)\r", "        postman.setEnvironmentVariable(\"password\", body.password)\r", "    }\r", "})"],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"phone_number\": \"{{phone_number}}\",\r\n    \"email\": \"{{$randomEmail}}\",\r\n    \"password\": \"{{$randomPassword}}\",\r\n    \"first_name\": \"{{$randomFirstName}}\",\r\n    \"last_name\": \"{{$randomLastName}}\"\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/signup",
+                            "host": ["{{base_url}}"],
+                            "path": ["signup"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "customer login",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": ["pm.test(\"customer login\", function () {\r", "    pm.response.to.have.status(200)\r", "\r", "    const body = pm.response.json()\r", "    if (pm.response.code === 200) {\r", "        postman.setEnvironmentVariable(\"access_token\", body.accessToken)\r", "        postman.setEnvironmentVariable(\"refresh_token\", body.refreshToken)\r", "\r", "        const parts = body.accessToken.split('.')\r", "        const user = JSON.parse(atob(parts[1]))\r", "        postman.setEnvironmentVariable(\"user_id\", user.id)\r", "    }\r", "})"],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"username\": \"{{username}}\",\r\n    \"password\": \"{{password}}\"\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/login",
+                            "host": ["{{base_url}}"],
+                            "path": ["login"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "fetch all purchasable fruits",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": ["pm.test(\"customer get fruits\", function() {\r", "    pm.response.to.have.status(200)\r", "})"],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/fruits",
+                            "host": ["{{base_url}}"],
+                            "path": ["fruits"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "customer logout",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": ["pm.test(\"customer logout\", function () {\r", "    pm.response.to.have.status(200)\r", "    \r", "    if (pm.response.code === 200) {\r", "        postman.setEnvironmentVariable(\"access_token\", \"\")\r", "        postman.setEnvironmentVariable(\"refresh_token\", \"\")\r", "        postman.setEnvironmentVariable(\"user_id\", \"\")\r", "        postman.setEnvironmentVariable(\"username\", \"\")\r", "        postman.setEnvironmentVariable(\"password\", \"\")\r", "        postman.setEnvironmentVariable(\"phone_number\", \"\")\r", "    }\r", "})"],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/logout",
+                            "host": ["{{base_url}}"],
+                            "path": ["logout"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "store owner login",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": ["pm.test(\"store owner login\", function () {\r", "    pm.response.to.have.status(200)\r", "\r", "    const body = pm.response.json()\r", "    if (pm.response.code === 200) {\r", "        postman.setEnvironmentVariable(\"access_token\", body.accessToken)\r", "        postman.setEnvironmentVariable(\"refresh_token\", body.refreshToken)\r", "\r", "        const parts = body.accessToken.split('.')\r", "        const user = JSON.parse(atob(parts[1]))\r", "        postman.setEnvironmentVariable(\"user_id\", user.id)\r", "    }\r", "})"],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"username\": \"admin@fruitstore.com\",\r\n    \"password\": \"123456\"\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/login",
+                            "host": ["{{base_url}}"],
+                            "path": ["login"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "fetch all fruits",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": ["pm.test(\"store owner get fruits\", function() {\r", "    pm.response.to.have.status(200)\r", "})"],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/admin/fruits",
+                            "host": ["{{base_url}}"],
+                            "path": ["admin", "fruits"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "store owner logout",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": ["pm.test(\"store owner logout\", function () {\r", "    pm.response.to.have.status(200)\r", "    \r", "    if (pm.response.code === 200) {\r", "        postman.setEnvironmentVariable(\"access_token\", \"\")\r", "        postman.setEnvironmentVariable(\"refresh_token\", \"\")\r", "        postman.setEnvironmentVariable(\"user_id\", \"\")\r", "        postman.setEnvironmentVariable(\"username\", \"\")\r", "        postman.setEnvironmentVariable(\"password\", \"\")\r", "        postman.setEnvironmentVariable(\"phone_number\", \"\")\r", "    }\r", "})"],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/logout",
+                            "host": ["{{base_url}}"],
+                            "path": ["logout"]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "refresh token success",
+            "item": [
+                {
+                    "name": "signup",
+                    "event": [
+                        {
+                            "listen": "prerequest",
+                            "script": {
+                                "exec": ["let phone_number = \"09625355\" + (Math.floor(Math.random() * 99) + 10)\r", "pm.environment.set(\"phone_number\", phone_number)"],
+                                "type": "text/javascript"
+                            }
+                        },
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": ["pm.test(\"signup\", function () {\r", "    pm.response.to.have.status(201)\r", "    \r", "    const body = JSON.parse(pm.request.body.raw)\r", "    if (pm.response.code === 201) {\r", "        postman.setEnvironmentVariable(\"username\", body.phone_number)\r", "        postman.setEnvironmentVariable(\"password\", body.password)\r", "    }\r", "})"],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"phone_number\": \"{{phone_number}}\",\r\n    \"email\": \"{{$randomEmail}}\",\r\n    \"password\": \"{{$randomPassword}}\",\r\n    \"first_name\": \"{{$randomFirstName}}\",\r\n    \"last_name\": \"{{$randomLastName}}\"\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/signup",
+                            "host": ["{{base_url}}"],
+                            "path": ["signup"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "customer login",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": ["pm.test(\"customer login\", function () {\r", "    pm.response.to.have.status(200)\r", "\r", "    const body = pm.response.json()\r", "    if (pm.response.code === 200) {\r", "        postman.setEnvironmentVariable(\"access_token\", body.accessToken)\r", "        postman.setEnvironmentVariable(\"refresh_token\", body.refreshToken)\r", "\r", "        const parts = body.accessToken.split('.')\r", "        const user = JSON.parse(atob(parts[1]))\r", "        postman.setEnvironmentVariable(\"user_id\", user.id)\r", "    }\r", "})"],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"username\": \"{{username}}\",\r\n    \"password\": \"{{password}}\"\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/login",
+                            "host": ["{{base_url}}"],
+                            "path": ["login"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "fetch all purchasable fruits",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": ["pm.test(\"customer get fruits\", function() {\r", "    pm.response.to.have.status(200)\r", "})"],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/fruits",
+                            "host": ["{{base_url}}"],
+                            "path": ["fruits"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "refresh access token",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": ["pm.test(\"refresh access token\", function () {\r", "    pm.response.to.have.status(200)\r", "\r", "    const body = pm.response.json()\r", "    if (pm.response.code === 200) {\r", "        postman.setEnvironmentVariable(\"access_token\", body.accessToken)\r", "\r", "        const parts = body.accessToken.split('.')\r", "        const user = JSON.parse(atob(parts[1]))\r", "        postman.setEnvironmentVariable(\"user_id\", user.id)\r", "    }\r", "})"],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"id\": \"{{user_id}}\",\r\n    \"refreshToken\": \"{{refresh_token}}\"\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/refresh",
+                            "host": ["{{base_url}}"],
+                            "path": ["refresh"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "fetch all purchasable fruits",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": ["pm.test(\"customer get fruits\", function() {\r", "    pm.response.to.have.status(200)\r", "})"],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/fruits",
+                            "host": ["{{base_url}}"],
+                            "path": ["fruits"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "customer logout",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": ["pm.test(\"customer logout\", function () {\r", "    pm.response.to.have.status(200)\r", "    \r", "    if (pm.response.code === 200) {\r", "        postman.setEnvironmentVariable(\"access_token\", \"\")\r", "        postman.setEnvironmentVariable(\"refresh_token\", \"\")\r", "        postman.setEnvironmentVariable(\"user_id\", \"\")\r", "        postman.setEnvironmentVariable(\"username\", \"\")\r", "        postman.setEnvironmentVariable(\"password\", \"\")\r", "        postman.setEnvironmentVariable(\"phone_number\", \"\")\r", "    }\r", "})"],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/logout",
+                            "host": ["{{base_url}}"],
+                            "path": ["logout"]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "order success",
+            "item": [
+                {
+                    "name": "store owner login",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": ["pm.test(\"store owner login\", function () {\r", "    pm.response.to.have.status(200)\r", "\r", "    const body = pm.response.json()\r", "    if (pm.response.code === 200) {\r", "        postman.setEnvironmentVariable(\"access_token\", body.accessToken)\r", "        postman.setEnvironmentVariable(\"refresh_token\", body.refreshToken)\r", "\r", "        const parts = body.accessToken.split('.')\r", "        const user = JSON.parse(atob(parts[1]))\r", "        postman.setEnvironmentVariable(\"user_id\", user.id)\r", "    }\r", "})"],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"username\": \"admin@fruitstore.com\",\r\n    \"password\": \"123456\"\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/login",
+                            "host": ["{{base_url}}"],
+                            "path": ["login"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "fruit record for add new fruit",
+                    "event": [
+                        {
+                            "listen": "prerequest",
+                            "script": {
+                                "exec": ["let price = (Math.floor(Math.random() * 99) + 10) * 10000\r", "let amount = Math.floor(Math.random() * 99) + 10\r", "let fruits = [\r", "    \"Apple\",\r", "    \"Apricot\",\r", "    \"Banana\",\r", "    \"Cherry\",\r", "    \"Coconut\",\r", "    \"Mango\",\r", "    \"Orange\",\r", "    \"Mulberry\"\r", "]\r", "pm.environment.set(\"randomPrice\", price)\r", "pm.environment.set(\"randomAmount\", amount)\r", "pm.environment.set(\"randomFruitName\", fruits[Math.floor(Math.random() * fruits.length) + 0])"],
+                                "type": "text/javascript"
+                            }
+                        },
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": ["pm.test(\"add new fruit record\", function () {\r", "    pm.response.to.have.status(201)\r", "\r", "    const body = pm.response.json()\r", "    if (pm.response.code === 201) {\r", "        postman.setEnvironmentVariable(\"fruit_id\", body.id)\r", "    }\r", "})"],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"fruit_id\": null,\r\n    \"name\": \"{{randomFruitName}}\",\r\n    \"price\": {{randomPrice}},\r\n    \"amount\": {{randomAmount}}\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/admin/records",
+                            "host": ["{{base_url}}"],
+                            "path": ["admin", "records"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "update fruit price",
+                    "event": [
+                        {
+                            "listen": "prerequest",
+                            "script": {
+                                "exec": ["let price = (Math.floor(Math.random() * 99) + 10) * 10000\r", "pm.environment.set(\"randomPrice\", price)"],
+                                "type": "text/javascript"
+                            }
+                        },
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": ["pm.test(\"update fruit price\", function () {\r", "    pm.response.to.have.status(200)\r", "})"],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "PUT",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"price\": {{randomPrice}}\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/admin/fruits/{{fruit_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["admin", "fruits", "{{fruit_id}}"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "fetch all fruits",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": ["pm.test(\"fetch all fruits\", function () {\r", "    pm.response.to.have.status(200)\r", "\r", "    const body = pm.response.json();\r", "    pm.expect(body.items[0]._id).to.eql(pm.environment.get(\"fruit_id\"));\r", "})"],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/admin/fruits",
+                            "host": ["{{base_url}}"],
+                            "path": ["admin", "fruits"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "fetch fruit detail by id",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": ["pm.test(\"fetch fruit info\", function () {\r", "    pm.response.to.have.status(200)\r", "})"],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/admin/fruits/{{fruit_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["admin", "fruits", "{{fruit_id}}"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "store owner logout",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": ["pm.test(\"store owner logout\", function () {\r", "    pm.response.to.have.status(200)\r", "    \r", "    if (pm.response.code === 200) {\r", "        postman.setEnvironmentVariable(\"access_token\", \"\")\r", "        postman.setEnvironmentVariable(\"refresh_token\", \"\")\r", "        postman.setEnvironmentVariable(\"user_id\", \"\")\r", "        postman.setEnvironmentVariable(\"username\", \"\")\r", "        postman.setEnvironmentVariable(\"password\", \"\")\r", "        postman.setEnvironmentVariable(\"phone_number\", \"\")\r", "    }\r", "})"],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/logout",
+                            "host": ["{{base_url}}"],
+                            "path": ["logout"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "signup",
+                    "event": [
+                        {
+                            "listen": "prerequest",
+                            "script": {
+                                "exec": ["let phone_number = \"09625355\" + (Math.floor(Math.random() * 99) + 10)\r", "pm.environment.set(\"phone_number\", phone_number)"],
+                                "type": "text/javascript"
+                            }
+                        },
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": ["pm.test(\"signup\", function () {\r", "    pm.response.to.have.status(201)\r", "    \r", "    const body = JSON.parse(pm.request.body.raw)\r", "    if (pm.response.code === 201) {\r", "        postman.setEnvironmentVariable(\"username\", body.phone_number)\r", "        postman.setEnvironmentVariable(\"password\", body.password)\r", "    }\r", "})"],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"phone_number\": \"{{phone_number}}\",\r\n    \"email\": \"{{$randomEmail}}\",\r\n    \"password\": \"{{$randomPassword}}\",\r\n    \"first_name\": \"{{$randomFirstName}}\",\r\n    \"last_name\": \"{{$randomLastName}}\"\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/signup",
+                            "host": ["{{base_url}}"],
+                            "path": ["signup"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "customer login",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": ["pm.test(\"customer login\", function () {\r", "    pm.response.to.have.status(200)\r", "\r", "    const body = pm.response.json()\r", "    if (pm.response.code === 200) {\r", "        postman.setEnvironmentVariable(\"access_token\", body.accessToken)\r", "        postman.setEnvironmentVariable(\"refresh_token\", body.refreshToken)\r", "\r", "        const parts = body.accessToken.split('.')\r", "        const user = JSON.parse(atob(parts[1]))\r", "        postman.setEnvironmentVariable(\"user_id\", user.id)\r", "    }\r", "})"],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"username\": \"{{username}}\",\r\n    \"password\": \"{{password}}\"\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/login",
+                            "host": ["{{base_url}}"],
+                            "path": ["login"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "fetch all purchasable fruits",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": ["pm.test(\"fetch all fruits\", function () {\r", "    pm.response.to.have.status(200)\r", "\r", "    const body = pm.response.json();\r", "    pm.expect(body.items.length).not.eql(0);\r", "    if (pm.response.code === 200) {\r", "        postman.setEnvironmentVariable(\"fruit_id\", body.items[0]._id)\r", "        postman.setEnvironmentVariable(\"fruits\", JSON.stringify(body.items))\r", "    }\r", "})"],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/fruits",
+                            "host": ["{{base_url}}"],
+                            "path": ["fruits"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "fetch purchasable fruit detail by id",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": ["pm.test(\"fetch fruit info\", function () {\r", "    pm.response.to.have.status(200)\r", "})"],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/fruits/{{fruit_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["fruits", "{{fruit_id}}"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "order some fruits",
+                    "event": [
+                        {
+                            "listen": "prerequest",
+                            "script": {
+                                "exec": ["let fruits = JSON.parse(pm.environment.get(\"fruits\"))\r", "let order_items = fruits.map(c => ({\r", "    fruit_id: c._id,\r", "    amount: Math.floor(Math.random() * c.amount) + 1\r", "}))\r", "pm.environment.set(\"order_items\", JSON.stringify(order_items))"],
+                                "type": "text/javascript"
+                            }
+                        },
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": ["pm.test(\"order some fruits\", function () {\r", "    pm.response.to.have.status(201)\r", "\r", "    const body = pm.response.json()\r", "    if (pm.response.code === 201) {\r", "        pm.environment.set(\"order_id\", body.id)\r", "    }\r", "})"],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"fruits\": {{order_items}},\r\n    \"shipping\": {\r\n        \"phone_number\": \"{{phone_number}}\",\r\n        \"address\": \"{{$randomStreetAddress}}\"\r\n    }\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/order",
+                            "host": ["{{base_url}}"],
+                            "path": ["order"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "fetch order histories",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": ["pm.test(\"order histories\", function () {\r", "    pm.response.to.have.status(200)\r", "\r", "    const body = pm.response.json();\r", "    pm.expect(body.items[0]._id).to.eql(pm.environment.get(\"order_id\"));\r", "})"],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/order",
+                            "host": ["{{base_url}}"],
+                            "path": ["order"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "fetch order detail by id",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": ["pm.test(\"fetch order detail\", function () {\r", "    pm.response.to.have.status(200)\r", "})"],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/order/{{order_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["order", "{{order_id}}"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "customer logout",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": ["pm.test(\"customer logout\", function () {\r", "    pm.response.to.have.status(200)\r", "    \r", "    if (pm.response.code === 200) {\r", "        postman.setEnvironmentVariable(\"access_token\", \"\")\r", "        postman.setEnvironmentVariable(\"refresh_token\", \"\")\r", "        postman.setEnvironmentVariable(\"user_id\", \"\")\r", "        postman.setEnvironmentVariable(\"username\", \"\")\r", "        postman.setEnvironmentVariable(\"password\", \"\")\r", "        postman.setEnvironmentVariable(\"phone_number\", \"\")\r", "    }\r", "})"],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/logout",
+                            "host": ["{{base_url}}"],
+                            "path": ["logout"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "store owner login",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": ["pm.test(\"store owner login\", function () {\r", "    pm.response.to.have.status(200)\r", "\r", "    const body = pm.response.json()\r", "    if (pm.response.code === 200) {\r", "        postman.setEnvironmentVariable(\"access_token\", body.accessToken)\r", "        postman.setEnvironmentVariable(\"refresh_token\", body.refreshToken)\r", "\r", "        const parts = body.accessToken.split('.')\r", "        const user = JSON.parse(atob(parts[1]))\r", "        postman.setEnvironmentVariable(\"user_id\", user.id)\r", "    }\r", "})"],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"username\": \"admin@fruitstore.com\",\r\n    \"password\": \"123456\"\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/login",
+                            "host": ["{{base_url}}"],
+                            "path": ["login"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "fruit record for add new fruit",
+                    "event": [
+                        {
+                            "listen": "prerequest",
+                            "script": {
+                                "exec": ["let price = (Math.floor(Math.random() * 99) + 10) * 10000\r", "let amount = Math.floor(Math.random() * 99) + 10\r", "let fruits = [\r", "    \"Apple\",\r", "    \"Apricot\",\r", "    \"Banana\",\r", "    \"Cherry\",\r", "    \"Coconut\",\r", "    \"Mango\",\r", "    \"Orange\",\r", "    \"Mulberry\"\r", "]\r", "pm.environment.set(\"randomPrice\", price)\r", "pm.environment.set(\"randomAmount\", amount)\r", "pm.environment.set(\"randomFruitName\", fruits[Math.floor(Math.random() * fruits.length) + 0])"],
+                                "type": "text/javascript"
+                            }
+                        },
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": ["pm.test(\"add new fruit record\", function () {\r", "    pm.response.to.have.status(201)\r", "\r", "    const body = pm.response.json()\r", "    if (pm.response.code === 201) {\r", "        postman.setEnvironmentVariable(\"fruit_id\", body.id)\r", "    }\r", "})"],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"fruit_id\": null,\r\n    \"name\": \"{{randomFruitName}}\",\r\n    \"price\": {{randomPrice}},\r\n    \"amount\": {{randomAmount}}\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/admin/records",
+                            "host": ["{{base_url}}"],
+                            "path": ["admin", "records"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "fetch all customer order",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": ["pm.test(\"all customer order\", function () {\r", "    pm.response.to.have.status(200)\r", "\r", "    const body = pm.response.json();\r", "    pm.expect(body.items[0]._id).to.eql(pm.environment.get(\"order_id\"));\r", "})"],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/admin/order",
+                            "host": ["{{base_url}}"],
+                            "path": ["admin", "order"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "fetch customer order detail by id",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": ["pm.test(\"fetch customer order detail\", function () {\r", "    pm.response.to.have.status(200)\r", "})"],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/admin/order/{{order_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["admin", "order", "{{order_id}}"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "fetch all fruits",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": ["pm.test(\"fetch all fruits\", function () {\r", "    pm.response.to.have.status(200)\r", "\r", "    const body = pm.response.json();\r", "    pm.expect(body.items.length).not.eql(0);\r", "    if (pm.response.code === 200) {\r", "        pm.environment.set(\"fruit_id\", body.items[0]._id)\r", "        pm.environment.set(\"fruits\", JSON.stringify(body.items))\r", "    }\r", "})"],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/admin/fruits",
+                            "host": ["{{base_url}}"],
+                            "path": ["admin", "fruits"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "delete fruit by id",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": ["pm.test(\"delete fruit\", function () {\r", "    pm.response.to.have.status(200)\r", "})"],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/admin/fruits/{{fruit_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["admin", "fruits", "{{fruit_id}}"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "delete multiple fruits by id list",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": ["pm.test(\"delete fruits\", function () {\r", "    pm.response.to.have.status(200)\r", "})"],
+                                "type": "text/javascript"
+                            }
+                        },
+                        {
+                            "listen": "prerequest",
+                            "script": {
+                                "exec": ["let fruits = JSON.parse(pm.environment.get(\"fruits\"))\r", "let delete_items = fruits.map(c => c._id)\r", "pm.environment.set(\"delete_items\", JSON.stringify(delete_items))"],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "DELETE",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"ids\": {{delete_items}}\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/admin/fruits",
+                            "host": ["{{base_url}}"],
+                            "path": ["admin", "fruits"]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "order with non exist fruit [wip]",
+            "item": []
+        },
+        {
+            "name": "order with not fit amout [wip]",
+            "item": []
+        }
+    ]
+}
