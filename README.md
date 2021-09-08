@@ -84,16 +84,22 @@ Ran all test suites.
 ## Testing with postman
 First, let import postman collection and enviroment file under `\test\postman` folder
 After successful import we have something look like this
+
 ![image](https://user-images.githubusercontent.com/24761814/132467472-a8a4c1e3-c38e-42aa-9707-1feed818780e.png)
 ![image](https://user-images.githubusercontent.com/24761814/132467579-97bcc004-1b87-4ca2-abaa-b20921f087bc.png)
 
 Please update `base_url` variable in enviroments to docker nodejs output port, by default setting it will be `http://localhost:8080`
 After update url we can testing by using postman collections runner.
 Getting started with `login success`
+
 ![image](https://user-images.githubusercontent.com/24761814/132468129-4f0e72c0-bc75-4d31-8486-1b4ad70ed391.png)
+
 Click `run` then in Runner interface click `Run FruitStore`
+
 ![image](https://user-images.githubusercontent.com/24761814/132468239-846d2960-cf5d-47f1-8d18-b12c5af0aa81.png)
+
 Postman will automate trigger each api to test 
+
 ![image](https://user-images.githubusercontent.com/24761814/132468363-71f9111e-7969-4f46-b480-e49bb68c8865.png)
 
 ## Cheers!
