@@ -1,5 +1,5 @@
 ## Installation
-After clone project source code then using docker to build:
+After clone project source code then we are using docker to build and run by execute below command.
 ```sh
 docker-compose build
 docker-compose up
@@ -7,7 +7,7 @@ docker-compose up
 If everything ok, we can test by making request to `http://localhost:8080/ping` for check.
 
 ## Testing with jest
-Also we can use [jest](https://jestjs.io/) to check source code test case and also test coverage too
+This project using [jest](https://jestjs.io/) framework as default testing framework to check source code test case and also test coverage too
 ```sh
 npm install 
 npm test
